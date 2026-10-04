@@ -155,7 +155,7 @@
   }
   @media (max-width: 720px) {
     .wrap { padding: 0 16px; }
-    .hero { grid-template-columns: 1fr; padding: 36px 0 24px; }
+    .hero { grid-template-columns: 1fr; padding: 36px 0 24px; overflow: hidden; } /* Vortex ragt sonst rechts raus -> horizontales Scrollen */
     .vortex { position: absolute; right: -90px; top: -10px; width: 260px; opacity: .35; z-index: -1; }
     .grid, .install { grid-template-columns: 1fr; }
   }
