@@ -3,29 +3,61 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#070817">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#070817" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f7fc" media="(prefers-color-scheme: light)">
 <meta name="description" content="Kleine, native macOS-Apps von vworp – kostenlos zum Herunterladen.">
 <title>vworp apps</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070817'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%234f8bff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='none' stroke='%2322d3ee' stroke-width='2'/%3E%3Ccircle cx='24' cy='10' r='2' fill='%237c5cff'/%3E%3C/svg%3E">
 <style>
-  /* Design-Tokens 1:1 von der vworp.de-Startseite */
+  /* Design-Tokens von der vworp.de-Startseite, ergänzt um Light Mode */
   :root {
     --bg: #070817;
     --bg-2: #0c0f2a;
     --card: rgba(20, 24, 58, .55);
     --card-hover: rgba(28, 33, 78, .7);
+    --card-solid: #14183a;
+    --chrome: rgba(12, 15, 42, .6);
+    --core: rgba(12, 15, 42, .8);
+    --fill: rgba(255, 255, 255, .04);
+    --grid-line: rgba(130, 150, 255, .05);
     --line: rgba(130, 150, 255, .14);
     --line-strong: rgba(130, 150, 255, .32);
     --text: #eef0ff;
+    --ink: #eef0ff;
     --muted: #a3a9d6;
-    --faint: #6f76a8;
+    --faint: #8188bb;
+    --highlight: #22d3ee;
     --tardis: #1f4fd1;
+    --tardis-deep: #1a3fa8;
     --blue: #4f8bff;
     --cyan: #22d3ee;
     --violet: #7c5cff;
+    --grad: linear-gradient(92deg, var(--blue) 0%, var(--cyan) 55%, var(--violet) 100%);
     --radius: 20px;
-    --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f7fc;
+      --bg-2: #eceefa;
+      --card: rgba(255, 255, 255, .7);
+      --card-hover: rgba(255, 255, 255, .92);
+      --card-solid: #ffffff;
+      --chrome: rgba(255, 255, 255, .7);
+      --core: rgba(255, 255, 255, .85);
+      --fill: rgba(20, 24, 58, .04);
+      --grid-line: rgba(31, 79, 209, .06);
+      --line: rgba(31, 79, 209, .14);
+      --line-strong: rgba(31, 79, 209, .32);
+      --text: #14183a;
+      --ink: #14183a;
+      --muted: #4a5080;
+      --faint: #5b6190;
+      --highlight: #0e7490;
+      --grad: linear-gradient(92deg, #1f4fd1 0%, #0e7490 55%, #6d4aff 100%);
+    }
+    body::before { opacity: .4; }
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -45,48 +77,56 @@
   body::after {
     content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background-image:
-      linear-gradient(rgba(130,150,255,.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(130,150,255,.05) 1px, transparent 1px);
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 56px 56px;
     mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 70%);
     -webkit-mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 70%);
   }
   a { color: inherit; }
-  :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 8px; }
+  :focus-visible { outline: 2px solid var(--highlight); outline-offset: 3px; border-radius: 8px; }
   .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
   header.top { display: flex; align-items: center; justify-content: space-between; padding: 28px 0 0; }
   .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.15rem; letter-spacing: .02em; text-decoration: none; }
-  .brand-mark { width: 34px; height: 34px; }
+  .brand-mark { width: 34px; height: 34px; color: var(--ink); }
   .brand b { color: var(--blue); font-weight: 800; }
   .brand small { color: var(--faint); font-weight: 600; font-size: .95rem; }
   .status {
     display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
     font-size: .8rem; color: var(--muted);
     border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px;
-    background: rgba(12, 15, 42, .6);
+    background: var(--chrome);
   }
   .status:hover { border-color: var(--line-strong); }
   .status i { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
 
   .hero { position: relative; display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; gap: 24px; padding: 56px 0 40px; }
-  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--highlight); }
   .eyebrow::before { content: ""; width: 18px; height: 1px; background: currentColor; }
   h1 { margin: 14px 0 16px; font-size: clamp(2.3rem, 5.4vw, 4rem); line-height: 1.05; font-weight: 800; letter-spacing: -.025em; }
-  h1 .grad { background: linear-gradient(92deg, var(--blue) 0%, var(--cyan) 55%, var(--violet) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .lead { color: var(--muted); font-size: 1.08rem; max-width: 34rem; margin: 0; }
   .lead em { color: var(--text); font-style: normal; }
 
-  .vortex { position: relative; aspect-ratio: 1; width: min(100%, 380px); justify-self: center; }
+  .vortex { position: relative; aspect-ratio: 1; width: min(100%, 380px); justify-self: center; color: var(--ink); }
   .vortex svg { width: 100%; height: 100%; overflow: visible; }
   .vortex .spin-slow { transform-origin: 200px 200px; animation: spin 90s linear infinite; }
   .vortex .spin-rev  { transform-origin: 200px 200px; animation: spin 140s linear infinite reverse; }
   .vortex .glow { filter: drop-shadow(0 0 18px rgba(79, 139, 255, .55)); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 8px 0 18px; }
+  .section-title { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; margin: 8px 0 18px; }
   .section-title h2 { margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: .01em; }
   .section-title span { color: var(--faint); font-size: .85rem; }
+  .section-title a { color: var(--highlight); font-weight: 600; }
+
+  .group + .group { margin-top: 32px; }
+  .group h3 {
+    display: flex; align-items: baseline; gap: 8px; margin: 0 0 12px;
+    font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  }
+  .group h3 span { color: var(--faint); font-weight: 600; letter-spacing: 0; }
 
   .grid { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
   .tile {
@@ -107,31 +147,42 @@
   }
   .tile:hover { border-color: var(--line-strong); background: var(--card-hover); transform: translateY(-2px); }
   .tile:hover::before { opacity: .9; }
+  /* Feedback sofort beim Drücken, nicht erst beim Loslassen */
+  .tile:active { transform: scale(.985); transition-duration: .1s; }
   .tile-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
   .tile-head img { flex: none; width: 56px; height: 56px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
-  .tile h3 { margin: 0; font-size: 1.25rem; font-weight: 750; letter-spacing: -.01em; }
+  .tile h4 { margin: 0; font-size: 1.25rem; font-weight: 750; letter-spacing: -.01em; }
   .via { color: var(--faint); font-size: .82rem; }
   .desc { color: var(--muted); font-size: .92rem; margin: 0 0 18px; }
   .spacer { flex: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-  .chip { display: inline-flex; padding: 3px 10px; border-radius: 999px; font-size: .76rem; color: var(--muted); background: rgba(255,255,255,.04); border: 1px solid var(--line); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: .76rem; color: var(--muted); background: var(--fill); border: 1px solid var(--line); }
+  .chip.local { color: var(--highlight); border-color: color-mix(in srgb, var(--highlight) 45%, transparent); font-weight: 600; }
+  .chip.local::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
   .open {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
     padding: 12px 16px; border-radius: 12px;
     text-decoration: none; font-weight: 650; font-size: .95rem; color: #fff;
-    background: linear-gradient(95deg, var(--tardis), color-mix(in srgb, var(--accent) 80%, var(--tardis)));
+    /* Akzent nur dezent beimischen, damit Weiß überall ≥ 4,5:1 bleibt */
+    background: linear-gradient(95deg, var(--tardis), color-mix(in srgb, var(--accent) 25%, var(--tardis-deep)));
     box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--accent) 80%, transparent);
     transition: filter .2s, box-shadow .2s;
   }
-  .open:hover { filter: brightness(1.12); box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--accent) 90%, transparent); }
+  /* Ganze Kachel ist Klickfläche – Hover-Lift verspricht nichts Falsches */
+  .open::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius); }
+  .tile:hover .open { filter: brightness(1.12); box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--accent) 90%, transparent); }
+  .tile:active .open { filter: brightness(.95); }
   .open span { display: flex; flex-direction: column; line-height: 1.3; }
-  .open small { font-weight: 500; opacity: .75; font-size: .8rem; }
+  .open small { font-weight: 500; opacity: .8; font-size: .8rem; }
   .open svg { width: 16px; height: 16px; flex: none; }
+  .open:focus-visible { outline-offset: 3px; }
 
   .install {
     margin-top: 36px; padding: 22px; border-radius: var(--radius);
     background: var(--card); border: 1px solid var(--line);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    scroll-margin-top: 24px;
   }
   .install h2 { grid-column: 1 / -1; margin: 0; font-size: 1.05rem; }
   .install ol, .install p { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: .9rem; }
@@ -139,7 +190,7 @@
   .install strong { color: var(--text); font-weight: 650; }
   code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem;
-    color: var(--text); background: rgba(255,255,255,.05); border: 1px solid var(--line);
+    color: var(--text); background: var(--fill); border: 1px solid var(--line);
     padding: 2px 7px; border-radius: 6px; user-select: all; overflow-wrap: anywhere;
   }
 
@@ -157,12 +208,20 @@
     .wrap { padding: 0 16px; }
     .hero { grid-template-columns: 1fr; padding: 36px 0 24px; overflow: hidden; } /* Vortex ragt sonst rechts raus -> horizontales Scrollen */
     .vortex { position: absolute; right: -90px; top: -10px; width: 260px; opacity: .35; z-index: -1; }
+    .vortex .spin-slow, .vortex .spin-rev { animation: none; } /* keine Bewegung hinter Text */
     .grid, .install { grid-template-columns: 1fr; }
     .status { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .vortex .spin-slow, .vortex .spin-rev { animation: none; }
-    .tile, .tile:hover { transition: none; transform: none; }
+    .tile, .tile:hover, .tile:active { transition: none; transform: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .tile, .tile:hover, .install { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--card-solid); }
+  }
+  @media (prefers-contrast: more) {
+    :root { --line: var(--muted); --line-strong: var(--text); --faint: var(--muted); }
+    .tile, .install { background: var(--card-solid); }
   }
 </style>
 </head>
@@ -174,7 +233,7 @@
       <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true">
         <circle cx="17" cy="17" r="15" fill="none" stroke="#4f8bff" stroke-width="1.6"/>
         <circle cx="17" cy="17" r="8.5" fill="none" stroke="#22d3ee" stroke-width="1.6"/>
-        <circle cx="17" cy="17" r="2.4" fill="#eef0ff"/>
+        <circle cx="17" cy="17" r="2.4" fill="currentColor"/>
         <circle cx="27.6" cy="6.4" r="2.6" fill="#7c5cff"/>
         <path d="M5 23 A13 13 0 0 0 12 29.5" fill="none" stroke="#7c5cff" stroke-width="1.6" stroke-linecap="round"/>
       </svg>
@@ -187,7 +246,7 @@
     <div>
       <span class="eyebrow">Native Mac-Apps</span>
       <h1>Kleine Helfer.<br><span class="grad">Innen größer als außen.</span></h1>
-      <p class="lead">Dreizehn schlanke Werkzeuge für macOS – selbst gebaut, ohne Abo, ohne Tracking, das meiste läuft komplett lokal. <em>Kachel wählen, Zip laden, loslegen.</em></p>
+      <p class="lead"><span id="count">13</span> schlanke Werkzeuge für macOS – selbst gebaut, ohne Abo, ohne Tracking, das meiste läuft komplett lokal. <em>Kachel wählen, Zip laden, loslegen.</em></p>
     </div>
     <div class="vortex" aria-hidden="true">
       <svg viewBox="0 0 400 400">
@@ -215,11 +274,11 @@
           <circle cx="226" cy="336" r="9" fill="none" stroke="#7c5cff" stroke-width="1.6"/>
         </g>
         <g class="glow">
-          <circle cx="200" cy="200" r="86" fill="rgba(12,15,42,.8)" stroke="url(#g1)" stroke-width="2.5"/>
+          <circle cx="200" cy="200" r="86" style="fill: var(--core)" stroke="url(#g1)" stroke-width="2.5"/>
           <circle cx="200" cy="200" r="58" fill="none" stroke="rgba(130,150,255,.35)" stroke-width="1"/>
           <path d="M142 200 A58 58 0 0 1 258 200" fill="none" stroke="#22d3ee" stroke-width="2"/>
-          <circle cx="200" cy="200" r="20" fill="none" stroke="#eef0ff" stroke-width="2"/>
-          <circle cx="200" cy="200" r="6" fill="#eef0ff"/>
+          <circle cx="200" cy="200" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="200" cy="200" r="6" fill="currentColor"/>
           <circle cx="241" cy="159" r="5" fill="#7c5cff"/>
         </g>
       </svg>
@@ -228,10 +287,10 @@
 
   <div class="section-title">
     <h2>Die Apps</h2>
-    <span>Alle für Apple Silicon (M1 und neuer)</span>
+    <span>Alle für Apple Silicon (M1 und neuer) · Erster Start? <a href="#installieren">So geht's</a></span>
   </div>
 
-  <main class="grid" id="apps">
+  <main id="apps">
     <noscript><p class="desc">Ohne JavaScript: <a href="https://github.com/stffnptry/vworp-apps/releases/latest">alle Downloads auf GitHub</a>.</p></noscript>
   </main>
 
@@ -252,32 +311,39 @@
 </div>
 
 <script>
-  // name, Datei im Release, Icon, Akzent, Kurzinfo, Beschreibung, Hinweise
+  // Gruppen in Anzeigereihenfolge
+  var groups = ["Mac-Helfer", "Dateien & Bilder", "Zuhause", "Medien & Sprache"];
+  // name, Datei im Release, Icon, Akzent, Kurzinfo, Beschreibung, Hinweise, Gruppe
   var apps = [
-    ["Geef", "Geef", "geef", "#c084fc", "GIF-Suche in der Menüleiste", "GIFs suchen, per Klick kopieren oder direkt in Chats ziehen, Favoriten sammeln.", ["macOS 14+", "Klipy-Key (kostenlos)"]],
-    ["ImgHoster", "ImgHoster", "imghoster", "#38bdf8", "Bild rein, Link raus", "Bilder per Drag & Drop zu imgbb hochladen – der Link landet sofort in der Zwischenablage.", ["macOS 13+", "imgbb-Key (kostenlos)"]],
-    ["MeinStrom", "MeinStrom", "meinstrom", "#facc15", "Stromzähler im Blick", "Zählerstände erfassen, Verbrauch und Kosten sehen, Prognose zur Jahresabrechnung inklusive.", ["macOS 14+", "lokal"]],
-    ["MeinWasser", "MeinWasser", "meinwasser", "#22d3ee", "Wasserzähler im Blick", "Ablesungen eintragen, Verbrauch, Kosten und Jahres-Hochrechnung auf einen Blick.", ["macOS 14+", "lokal"]],
-    ["MonitorVolume", "MonitorVolume", "monitorvolume", "#4f8bff", "Lautstärketasten für Monitore", "Steuert die Lautstärke externer Monitore mit den normalen Mac-Tasten – per DDC/CI.", ["macOS 13+", "Menüleiste"]],
-    ["Notion Cruncher", "NotionCruncher", "notioncruncher", "#a3a9d6", "Unter 5 MB, garantiert", "Verkleinert Bilder und PDFs lokal auf unter 5 MB – perfekt für Notion-Uploads.", ["macOS 13+", "lokal"]],
-    ["Ordnervergleich", "Ordnervergleich", "ordnervergleich", "#34d399", "Zwei Ordner, ein Stand", "Unterschiede zwischen zwei Ordnern finden und gezielt in eine oder beide Richtungen synchronisieren.", ["macOS 14+", "lokal"]],
-    ["PNG zu SVG", "PNGzuSVG", "pngzusvg", "#f472b6", "Echte Vektoren", "PNGs per Drag & Drop vektorisieren: Farbflächen werden zu Bézier-Pfaden, kein eingebettetes Pixelbild.", ["macOS 14+", "lokal"]],
-    ["QuickReminder", "QuickReminder", "quickreminder", "#fb923c", "Erinnerung per Kurzbefehl", "„Morgen 16 Uhr Zahnarzt“ tippen – landet als Erinnerung in Apple Erinnerungen. Optional mit Claude.", ["macOS 14+", "Key optional"]],
-    ["Sprachnotiz", "Sprachnotiz", "sprachnotiz", "#7c5cff", "Sprachnachricht → Text", "Transkribiert und fasst Sprachnachrichten zusammen – vollständig auf dem Mac, ohne Server.", ["macOS 26+", "lokal"]],
-    ["STLFixer", "STLFixer", "stlfixer", "#f87171", "Kaputte 3D-Modelle reparieren", "Repariert defekte STL-Dateien wasserdicht, offline – auch per Rechtsklick im Finder.", ["macOS 13+", "lokal"]],
-    ["Steffpad", "Steffpad", "steffpad", "#eef0ff", "Nur Text, sonst nichts", "Minimalistischer Texteditor mit Farbschemata von Solarized bis Terminal-Grün.", ["macOS 12+", "lokal"]],
-    ["Zen", "Zen", "zen", "#2dd4bf", "Ruhiger Musikplayer", "Schlanker Player für deine Jellyfin-Musikbibliothek, aufs Wesentliche reduziert.", ["macOS 14+", "Jellyfin-Server"]]
+    ["Geef", "Geef", "geef", "#c084fc", "GIF-Suche in der Menüleiste", "GIFs suchen, per Klick kopieren oder direkt in Chats ziehen, Favoriten sammeln.", ["macOS 14+", "Klipy-Key (kostenlos)"], "Mac-Helfer"],
+    ["ImgHoster", "ImgHoster", "imghoster", "#38bdf8", "Bild rein, Link raus", "Bilder per Drag & Drop zu imgbb hochladen – der Link landet sofort in der Zwischenablage.", ["macOS 13+", "imgbb-Key (kostenlos)"], "Dateien & Bilder"],
+    ["MeinStrom", "MeinStrom", "meinstrom", "#facc15", "Stromzähler im Blick", "Zählerstände erfassen, Verbrauch und Kosten sehen, Prognose zur Jahresabrechnung inklusive.", ["macOS 14+", "lokal"], "Zuhause"],
+    ["MeinWasser", "MeinWasser", "meinwasser", "#22d3ee", "Wasserzähler im Blick", "Ablesungen eintragen, Verbrauch, Kosten und Jahres-Hochrechnung auf einen Blick.", ["macOS 14+", "lokal"], "Zuhause"],
+    ["MonitorVolume", "MonitorVolume", "monitorvolume", "#4f8bff", "Lautstärketasten für Monitore", "Steuert die Lautstärke externer Monitore mit den normalen Mac-Tasten – per DDC/CI.", ["macOS 13+", "Menüleiste"], "Mac-Helfer"],
+    ["Notion Cruncher", "NotionCruncher", "notioncruncher", "#a3a9d6", "Unter 5 MB, garantiert", "Verkleinert Bilder und PDFs lokal auf unter 5 MB – perfekt für Notion-Uploads.", ["macOS 13+", "lokal"], "Dateien & Bilder"],
+    ["Ordnervergleich", "Ordnervergleich", "ordnervergleich", "#34d399", "Zwei Ordner, ein Stand", "Unterschiede zwischen zwei Ordnern finden und gezielt in eine oder beide Richtungen synchronisieren.", ["macOS 14+", "lokal"], "Dateien & Bilder"],
+    ["PNG zu SVG", "PNGzuSVG", "pngzusvg", "#f472b6", "Echte Vektoren", "PNGs per Drag & Drop vektorisieren: Farbflächen werden zu Bézier-Pfaden, kein eingebettetes Pixelbild.", ["macOS 14+", "lokal"], "Dateien & Bilder"],
+    ["QuickReminder", "QuickReminder", "quickreminder", "#fb923c", "Erinnerung per Kurzbefehl", "„Morgen 16 Uhr Zahnarzt“ tippen – landet als Erinnerung in Apple Erinnerungen. Optional mit Claude.", ["macOS 14+", "Key optional"], "Mac-Helfer"],
+    ["Sprachnotiz", "Sprachnotiz", "sprachnotiz", "#7c5cff", "Sprachnachricht → Text", "Transkribiert und fasst Sprachnachrichten zusammen – vollständig auf dem Mac, ohne Server.", ["macOS 26+", "lokal"], "Medien & Sprache"],
+    ["STLFixer", "STLFixer", "stlfixer", "#f87171", "Kaputte 3D-Modelle reparieren", "Repariert defekte STL-Dateien wasserdicht, offline – auch per Rechtsklick im Finder.", ["macOS 13+", "lokal"], "Dateien & Bilder"],
+    ["Steffpad", "Steffpad", "steffpad", "#eef0ff", "Nur Text, sonst nichts", "Minimalistischer Texteditor mit Farbschemata von Solarized bis Terminal-Grün.", ["macOS 12+", "lokal"], "Mac-Helfer"],
+    ["Zen", "Zen", "zen", "#2dd4bf", "Ruhiger Musikplayer", "Schlanker Player für deine Jellyfin-Musikbibliothek, aufs Wesentliche reduziert.", ["macOS 14+", "Jellyfin-Server"], "Medien & Sprache"]
   ];
   var base = "https://github.com/stffnptry/vworp-apps/releases/latest/download/";
   var arrow = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3v9M4 8l4 4 4-4M3 14h10"/></svg>';
-  document.getElementById("apps").insertAdjacentHTML("beforeend", apps.map(function (a) {
+  function tile(a) {
     return '<article class="tile" style="--accent:' + a[3] + '">' +
       '<div class="tile-head"><img src="icons/' + a[2] + '.png" alt="" width="56" height="56" loading="lazy">' +
-      '<div><h3>' + a[0] + '</h3><div class="via">' + a[4] + '</div></div></div>' +
+      '<div><h4>' + a[0] + '</h4><div class="via">' + a[4] + '</div></div></div>' +
       '<p class="desc">' + a[5] + '</p><div class="spacer"></div>' +
-      '<div class="chips">' + a[6].map(function (c) { return '<span class="chip">' + c + '</span>'; }).join("") + '</div>' +
+      '<div class="chips">' + a[6].map(function (c) { return '<span class="chip' + (c === "lokal" ? ' local' : '') + '">' + c + '</span>'; }).join("") + '</div>' +
       '<a class="open" href="' + base + a[1] + '.zip"><span>' + a[0] + ' laden <small>' + a[1] + '.zip</small></span>' + arrow + '</a>' +
       '</article>';
+  }
+  document.getElementById("count").textContent = apps.length;
+  document.getElementById("apps").insertAdjacentHTML("beforeend", groups.map(function (g) {
+    var list = apps.filter(function (a) { return a[7] === g; });
+    return '<section class="group"><h3>' + g + ' <span>' + list.length + '</span></h3><div class="grid">' + list.map(tile).join("") + '</div></section>';
   }).join(""));
 </script>
 </body>
